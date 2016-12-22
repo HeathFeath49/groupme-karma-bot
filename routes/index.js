@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var resources = require('../resources/groupme-karma-bot.json');
 
 /* GET home page. */
 router.post('/process_message', function(req, res, next) {
@@ -11,7 +12,7 @@ router.post('/process_message', function(req, res, next) {
 				method: 'POST',
 				url: 'https://api.groupme.com/v3/bots/post',
 				json: {
-					"bot_id": "821341b4b98c095d00042f97cc",
+					"bot_id": resources.bot_id,
 					"text"	: "What can I help you with?"
 				}
 			});
