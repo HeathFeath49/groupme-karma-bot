@@ -4,6 +4,7 @@ var request = require('request');
 var resources = require('../resources/bot-info.json');
 
 /* GET home page. */
+console.log("up and running!");
 router.post('/process_message', function(req, res, next) {
 	console.log(req.body);
 	if(req.body.sender_type == "user"){
