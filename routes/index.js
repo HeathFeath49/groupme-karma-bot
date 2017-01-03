@@ -63,6 +63,10 @@ router.post('/process_message', function(req, res, next) {
 					"bot_id": resources.bot_id,
 					"text"	: "What's cooking?"
 				}
+			}, (err, data) => {
+				if(err){
+					console.log(err);
+				}
 			});
 		}
 	}
