@@ -7,7 +7,7 @@ var resources = require('../resources/bot-info.json');
 var members = {};
 
 //regex to check for specific word, case insensitive 
-var re = new RegExp(word,"i");
+//var re = new RegExp(word,"i");
 
 //class
 //TESTED: PASSED
