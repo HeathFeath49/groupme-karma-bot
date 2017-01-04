@@ -56,7 +56,8 @@ router.post('/process_message', function(req, res, next) {
 	console.log(req.body);
 	if(req.body.sender_type == "user"){
 		if(req.body.text == "yo"){
-			return request({
+			console.log("hello!");
+			/*return request({
 				method: 'POST',
 				url: 'https://api.groupme.com/v3/bots/post',
 				json: {
@@ -67,7 +68,7 @@ router.post('/process_message', function(req, res, next) {
 				if(err){
 					console.log(err);
 				}
-			});
+			});*/
 		}
 	}
 });
