@@ -26,27 +26,41 @@ function addMember(name){
   members[mem.name] = mem;
 }
 
+//TESTED: PASSED
+function isCurse(word,curObj){
+   for(var l in curObj){
+	    for(var i=0;i<curObj[l].length;i++){
+	      var regEx = new RegExp(curObj[l][i],"i");
+	      if(regEx.test(word)){
+	        return true;
+	      }
+	    }
+   }return false;
+}
 
 // adds/increments members curseHistory object
-//TESTED: PASSED  
+//TESTED: PASSED(Mock data) 
 function updateCurseObj(name,curse){
   var cur = curse.toLowerCase();
 	var ch = members[name].curseHistory;
 	if(ch[cur] === undefined){
-	  console.log("curse not in curse history");
 	  ch[cur] = 1;
 	}
 	else{
-	  console.log("curse already in curse history");
 	  ch[cur] += 1;
 	}
 }
 
 //breaks message up by individual words and checks
 //each word to see if it is a curse
-function processMessage(message){
-	var indWords = message.split(" ");
-	console.log(indWords);
+//TESTED: Mock data
+function processMessage(user,message){
+	var wordArr = message.split(" ");
+	for(var i=0;i<wordArr.length;i++){
+	   if(isCurse(wordArr[i],curseWords)){
+	    updateCurseObj(user,wordArr[i]);
+	   }
+	}
 }
 
 
