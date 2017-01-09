@@ -60,7 +60,7 @@ function updateCurseObj(name,curse){
 
 //bot sends message to chat reprimanding user
 //and letting them know what bad word they used
-function reprimand(user,badWord){
+function reprimandUser(user,badWord){
 	console.log("hit reprimand");
 	return request({
 		method: 'POST',
