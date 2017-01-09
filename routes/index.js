@@ -93,7 +93,7 @@ router.post('/process_message',function(req,res,next){
 	if(req.body.sender_type == "user"){
 		console.log(req.body.name);
 		console.log(req.body.text);
-		process_message(req.body.name,req.body.text);	
+		processMessage(req.body.name,req.body.text);	
 	}
 })
 
