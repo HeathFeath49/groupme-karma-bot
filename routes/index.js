@@ -23,18 +23,20 @@ function member(name){
 //adds them to global members object
 //TESTED: PASSED 
 function addMember(name){
-  var mem = new member(name);
-  members[mem.name] = mem;
+	console.log("hit addMember");
+  	var mem = new member(name);
+  	members[mem.name] = mem;
 }
 
-//TESTED: PASSED
+//TESTED: PASSED(mock data)
 function isCurse(word,curObj){
-   for(var l in curObj){
-	    for(var i=0;i<curObj[l].length;i++){
-	      var regEx = new RegExp(curObj[l][i],"i");
-	      if(regEx.test(word)){
-	        return true;
-	      }
+	console.log("hit isCurse");
+	for(var l in curObj){
+    	for(var i=0;i<curObj[l].length;i++){
+      		var regEx = new RegExp(curObj[l][i],"i");
+      		if(regEx.test(word)){
+	        	return true;
+	      	}
 	    }
    }return false;
 }
@@ -42,6 +44,7 @@ function isCurse(word,curObj){
 // adds/increments members curseHistory object
 //TESTED: PASSED(Mock data) 
 function updateCurseObj(name,curse){
+	console.log("hit updateCurseObj");
   	if(!(name in members)){
   		addMember(name);
   	}
@@ -58,6 +61,7 @@ function updateCurseObj(name,curse){
 //bot sends message to chat reprimanding user
 //and letting them know what bad word they used
 function reprimand(user,badWord){
+	console.log("hit reprimand");
 	return request({
 		method: 'POST',
 		url: 'https://api.groupme.com/v3/bots/post',
@@ -72,6 +76,7 @@ function reprimand(user,badWord){
 //each word to see if it is a curse
 //TESTED: Mock data
 function processMessage(user,message){
+	console.log("hit processMessage");
 	var wordArr = message.split(" ");
 	for(var i=0;i<wordArr.length;i++){
 	   if(isCurse(wordArr[i],curseData)){
@@ -86,6 +91,8 @@ function processMessage(user,message){
 console.log("up and running!");
 router.post('/process_message',function(req,res,next){
 	if(req.body.sender_type == "user"){
+		console.log(req.body.name);
+		console.log(req.body.text);
 		process_message(req.body.name,req.body.text);	
 	}
 })
