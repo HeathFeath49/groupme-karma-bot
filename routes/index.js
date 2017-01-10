@@ -7,12 +7,12 @@ var curseData = require('../resources/curse-data.json');
 
 var members = {}; //obj of member objects
 
-/*var botCommands = [
+var botCommands = [
 	{
 		command:/(\/say)+ (hi)/,
 		handler: sendMessage('hello there');
 	}
-];*/
+];
 
 //TESTED: PASSED
 function member(name){  
@@ -84,8 +84,10 @@ function reprimandUser(user,badWord){
 
 
 function commandResolve(user,message,arrOfComms){
+	console.log("hit commandResolve");
 	for(var c=0;c<arrOfComms;c++){
 		if(arrOfComms[i].command.test(message)){
+			console.log("command found");
 			arrOfComms[i].handler();
 		}
 	}
@@ -97,7 +99,7 @@ function commandResolve(user,message,arrOfComms){
 function processMessage(user,message){
 	console.log("hit processMessage");
 
-	commandResolve(user,message,botData.bot_commands);
+	commandResolve(user,message,botCommands);
 
 	//split up words to check for curses
 	var wordArr = message.split(" "); 
