@@ -12,6 +12,7 @@ var botCommands = [
 		command:/(\/say)+ (hi)/,
 		handler: sayHi
 	}
+
 ];
 
 
@@ -27,11 +28,13 @@ function member(name){
 //adds them to global members object
 //TESTED: PASSED 
 function addMember(name){
-	console.log("hit addMember");
+	//console.log("hit addMember");
   	var mem = new member(name);
   	members[mem.name] = mem;
 }
 
+
+//returns request to post message to group 
 //TESTED:PASSED
 function sendMessage(msg){
 	return request({
@@ -44,11 +47,13 @@ function sendMessage(msg){
 	});
 }
 
-function sayHi(){
+function sayHi(req,res){
 	sendMessage('hi there');
+	console.log(req.regMatch);
 }
 
 //TESTED: PASSED
+//returns boolean
 function isCurse(word,curObj){
 	//console.log("hit isCurse");
 	for(var l in curObj){
@@ -88,11 +93,14 @@ function reprimandUser(user,badWord){
 }
 
 
+//loops through command array and calls handler if command found
+//TESTED:PASSED
 function commandResolve(req,res,arrOfComms){
 	console.log("hit commandResolve");
 	for(var c=0;c<arrOfComms;c++){
 		if(arrOfComms[c].command.test(req.body.text)){
 			console.log("command found");
+			req.regMatch = arrOfComms[c].command.exec(req.body.text);
 			arrOfComms[c].handler(req,res);
 		}
 	}
