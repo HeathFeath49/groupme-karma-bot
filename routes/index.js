@@ -4,20 +4,25 @@ var request = require('request');
 var resources = require('../resources/bot-info.json');
 var curseData = require('../resources/curse-data.json');
 
-//obj of member objects
-var members = {};
 
-//regex to check for specific word, case insensitive 
-//var re = new RegExp(word,"i");
+var members = {}; //obj of member objects
 
-//class
+var botCommands = [
+	{
+		command:'/say hello',
+		handler: function(){
+			console.log('hello there');
+		}
+	}
+];
+
 //TESTED: PASSED
-function member(name){
+function member(name){  
 	this.name = name;
-	this.curseHistory = {};
+	this.curseHistory = {numOfCurses:0};
 }
 
-//helper functions//
+//HELPER FUNCTIONS//
 
 //creates new instance of member class and
 //adds them to global members object
@@ -26,6 +31,17 @@ function addMember(name){
 	console.log("hit addMember");
   	var mem = new member(name);
   	members[mem.name] = mem;
+}
+
+function sendMessage(msg){
+	return request({
+		method: 'POST',
+		url: 'https://api.groupme.com/v3/bots/post',
+		json:{
+				"bot_id": resources.bot_id,
+				"text"	: msg
+			}
+	});
 }
 
 //TESTED: PASSED(mock data)
@@ -56,20 +72,26 @@ function updateCurseObj(name,curse){
 	else{
 	  ch[cur] += 1;
 	}
+	ch.numOfCurses+=1;
 }
 
 //bot sends message to chat reprimanding user
 //and letting them know what bad word they used
 function reprimandUser(user,badWord){
 	console.log("hit reprimand");
-	return request({
+	sendMessage("Hey "+user+"! Watch your language! (bad word: "+badWord+")");
+
+	/*return request({
 		method: 'POST',
 		url: 'https://api.groupme.com/v3/bots/post',
 		json:{
 				"bot_id": resources.bot_id,
 				"text"	: "Hey "+user+"! Watch your language! (bad word: "+badWord+")"
 			}
-	});
+	});*/
+}
+
+function commandResolve(message){
 }
 
 //breaks message up by individual words and checks
@@ -77,12 +99,17 @@ function reprimandUser(user,badWord){
 //TESTED: Mock data
 function processMessage(user,message){
 	console.log("hit processMessage");
-	var wordArr = message.split(" ");
+
+	//commandResolve(message);
+
+	//split up words to check for curses
+	var wordArr = message.split(" "); 
 	for(var i=0;i<wordArr.length;i++){
-	   if(isCurse(wordArr[i],curseData)){
-	    updateCurseObj(user,wordArr[i]);
-	    reprimandUser(user,wordArr[i]); 
-	   }
+		//check for curses
+		if(isCurse(wordArr[i],curseData)){
+			updateCurseObj(user,wordArr[i]);
+	    	reprimandUser(user,wordArr[i]); 
+	   	}
 	}
 }
 
@@ -91,26 +118,8 @@ function processMessage(user,message){
 console.log("up and running!");
 router.post('/process_message',function(req,res,next){
 	if(req.body.sender_type == "user"){
-		console.log(req.body.name);
-		console.log(req.body.text);
 		processMessage(req.body.name,req.body.text);	
 	}
 })
-
-/*router.post('/process_message', function(req, res, next) {
-	console.log(req.body);
-	if(req.body.sender_type == "user"){
-		if(req.body.text == "yo"){
-			return request({
-				method: 'POST',
-				url: 'https://api.groupme.com/v3/bots/post',
-				json: {
-					"bot_id": resources.bot_id,
-					"text"	: "What's cooking?"
-				}
-			});
-		}
-	}
-});*/
 
 module.exports = router;
