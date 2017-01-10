@@ -10,7 +10,9 @@ var members = {}; //obj of member objects
 var botCommands = [
 	{
 		command:/(\/say)+ (hi)/,
-		handler: sendMessage('hello there');
+		handler: function(){
+			sendMessage('hi there');
+		}
 	}
 ];
 
@@ -83,23 +85,27 @@ function reprimandUser(user,badWord){
 }
 
 
-function commandResolve(user,message,arrOfComms){
+function commandResolve(req,res,arrOfComms){
 	console.log("hit commandResolve");
 	for(var c=0;c<arrOfComms;c++){
 		if(arrOfComms[i].command.test(message)){
 			console.log("command found");
-			arrOfComms[i].handler();
+			arrOfComms[i].handler(req,res);
 		}
 	}
 }
 
+
 //breaks message up by individual words and checks
 //each word to see if it is a curse
 //TESTED: 
-function processMessage(user,message){
+function processMessage(req,res){
 	console.log("hit processMessage");
 
-	commandResolve(user,message,botCommands);
+	var user = req.body.name;
+	var message = req.body.text;
+
+	commandResolve(req,res,botCommands);
 
 	//split up words to check for curses
 	var wordArr = message.split(" "); 
@@ -116,7 +122,7 @@ function processMessage(user,message){
 /*MAIN*/
 router.post('/process_message',function(req,res,next){
 	if(req.body.sender_type == "user"){
-		processMessage(req.body.name,req.body.text);	
+		processMessage(req,res);	
 	}
 })
 
