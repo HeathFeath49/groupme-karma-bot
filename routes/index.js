@@ -14,6 +14,7 @@ var botCommands = [
 	}
 ];
 
+
 //TESTED: PASSED
 function member(name){  
 	this.name = name;
@@ -90,9 +91,9 @@ function reprimandUser(user,badWord){
 function commandResolve(req,res,arrOfComms){
 	console.log("hit commandResolve");
 	for(var c=0;c<arrOfComms;c++){
-		if(arrOfComms[i].command.test(req.body.text)){
+		if(arrOfComms[c].command.test(req.body.text)){
 			console.log("command found");
-			arrOfComms[i].handler(req,res);
+			arrOfComms[c].handler(req,res);
 		}
 	}
 }
