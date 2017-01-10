@@ -88,7 +88,7 @@ function reprimandUser(user,badWord){
 function commandResolve(req,res,arrOfComms){
 	console.log("hit commandResolve");
 	for(var c=0;c<arrOfComms;c++){
-		if(arrOfComms[i].command.test(message)){
+		if(arrOfComms[i].command.test(req.body.text)){
 			console.log("command found");
 			arrOfComms[i].handler(req,res);
 		}
