@@ -10,9 +10,7 @@ var members = {}; //obj of member objects
 var botCommands = [
 	{
 		command:/(\/say)+ (hi)/,
-		handler: function(){
-			sendMessage('hi there');
-		}
+		handler: sayHi
 	}
 ];
 
@@ -43,6 +41,10 @@ function sendMessage(msg){
 				"text"	: msg
 			}
 	});
+}
+
+function sayHi(){
+	sendMessage('hi there');
 }
 
 //TESTED: PASSED
