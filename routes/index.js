@@ -1,20 +1,18 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-var resources = require('../resources/bot-info.json');
+var botData = require('../resources/bot-info.json');
 var curseData = require('../resources/curse-data.json');
 
 
 var members = {}; //obj of member objects
 
-var botCommands = [
+/*var botCommands = [
 	{
-		command:'/say hello',
-		handler: function(){
-			console.log('hello there');
-		}
+		command:/(\/say)+ (hi)/,
+		handler: sendMessage('hello there');
 	}
-];
+];*/
 
 //TESTED: PASSED
 function member(name){  
@@ -33,20 +31,21 @@ function addMember(name){
   	members[mem.name] = mem;
 }
 
+//TESTED:PASSED
 function sendMessage(msg){
 	return request({
 		method: 'POST',
 		url: 'https://api.groupme.com/v3/bots/post',
 		json:{
-				"bot_id": resources.bot_id,
+				"bot_id": botData.bot_id,
 				"text"	: msg
 			}
 	});
 }
 
-//TESTED: PASSED(mock data)
+//TESTED: PASSED
 function isCurse(word,curObj){
-	console.log("hit isCurse");
+	//console.log("hit isCurse");
 	for(var l in curObj){
     	for(var i=0;i<curObj[l].length;i++){
       		var regEx = new RegExp(curObj[l][i],"i");
@@ -58,9 +57,9 @@ function isCurse(word,curObj){
 }
 
 // adds/increments members curseHistory object
-//TESTED: PASSED(Mock data) 
+//TESTED: PASSED 
 function updateCurseObj(name,curse){
-	console.log("hit updateCurseObj");
+	//console.log("hit updateCurseObj");
   	if(!(name in members)){
   		addMember(name);
   	}
@@ -77,30 +76,28 @@ function updateCurseObj(name,curse){
 
 //bot sends message to chat reprimanding user
 //and letting them know what bad word they used
+//TESTED:PASSED
 function reprimandUser(user,badWord){
 	console.log("hit reprimand");
 	sendMessage("Hey "+user+"! Watch your language! (bad word: "+badWord+")");
-
-	/*return request({
-		method: 'POST',
-		url: 'https://api.groupme.com/v3/bots/post',
-		json:{
-				"bot_id": resources.bot_id,
-				"text"	: "Hey "+user+"! Watch your language! (bad word: "+badWord+")"
-			}
-	});*/
 }
 
-function commandResolve(message){
+
+function commandResolve(user,message,arrOfComms){
+	for(var c=0;c<arrOfComms;c++){
+		if(arrOfComms[i].command.test(message)){
+			arrOfComms[i].handler();
+		}
+	}
 }
 
 //breaks message up by individual words and checks
 //each word to see if it is a curse
-//TESTED: Mock data
+//TESTED: 
 function processMessage(user,message){
 	console.log("hit processMessage");
 
-	//commandResolve(message);
+	commandResolve(user,message,botData.bot_commands);
 
 	//split up words to check for curses
 	var wordArr = message.split(" "); 
@@ -114,8 +111,7 @@ function processMessage(user,message){
 }
 
 
-/* GET home page. */
-console.log("up and running!");
+/*MAIN*/
 router.post('/process_message',function(req,res,next){
 	if(req.body.sender_type == "user"){
 		processMessage(req.body.name,req.body.text);	
