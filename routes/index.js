@@ -11,15 +11,20 @@ var botCommands = [
 	{
 		command:/(\/say)+ (hi)/,
 		handler: sayHi
+	},
+	{
+		command:/(\/favorite)+ (curse:)([a-zA-Z0-9. _^%&$#?!~@,-]+) /,
+		handler: returnFavCurse
 	}
 
 ];
 
 
 //TESTED: PASSED
-function member(name){  
+function member(name){
 	this.name = name;
-	this.curseHistory = {numOfCurses:0};
+	this.curseHistory = {};
+	this.numOfCurses = 0;
 }
 
 //HELPER FUNCTIONS//
@@ -47,13 +52,39 @@ function sendMessage(msg){
 	});
 }
 
+
+////////BOT COMMAND FUNCTIONS/////////
+
 function sayHi(req,res){
-	sendMessage('hi there');
-	console.log(req.regMatch);
+	sendMessage('Hey there '+req.body.name);
+	//console.log(req.regMatch);
 }
 
+function returnFavCurse(req,res){
+	var desiredUser = req.regMatch[3];
+	var ch;
+  	var maxWord;
+  	var maxNum=0;
+	if(isMember(desiredUser)){
+		ch = members[name].curseHistory;
+	
+  		for(var word in n){
+    		if(n[word]>maxNum){
+      			maxNum = n[word];
+      			maxWord = word;
+    		}
+  		}
+  		sendMessage(desiredUser+"'s favorite curse word: "+maxWord);
+	}
+	else{
+		sendMessage(desiredUser+" does not have a curse record.");
+	}
+}
+
+/////////////////////////////////////
+
 //TESTED: PASSED
-//returns boolean
+//returns boolean regarding word being curse
 function isCurse(word,curObj){
 	//console.log("hit isCurse");
 	for(var l in curObj){
@@ -66,22 +97,33 @@ function isCurse(word,curObj){
    }return false;
 }
 
-// adds/increments members curseHistory object
+//TESTED:
+//returns boolean
+function isMember(name,membersObj){
+	if(name in membersObj){
+  		return true;
+  	}
+  	else{
+  		return false;
+  	}
+}
+
+//adds/increments members curseHistory object
 //TESTED: PASSED 
 function updateCurseObj(name,curse){
 	//console.log("hit updateCurseObj");
-  	if(!(name in members)){
-  		addMember(name);
-  	}
   	var cur = curse.toLowerCase();
 	var ch = members[name].curseHistory;
+  	if(!(isMember(name))){
+  		addMember(name);
+  	} 	
 	if(ch[cur] === undefined){
 	  ch[cur] = 1;
 	}
 	else{
 	  ch[cur] += 1;
 	}
-	ch.numOfCurses+=1;
+	members[name].numOfCurses+=1;
 }
 
 //bot sends message to chat reprimanding user
@@ -97,7 +139,7 @@ function reprimandUser(user,badWord){
 //TESTED:PASSED
 function commandResolve(req,res,arrOfComms){
 	console.log("hit commandResolve");
-	for(var c=0;c<arrOfComms;c++){
+	for(var c=0;c<arrOfComms.length;c++){
 		if(arrOfComms[c].command.test(req.body.text)){
 			console.log("command found");
 			req.regMatch = arrOfComms[c].command.exec(req.body.text);
