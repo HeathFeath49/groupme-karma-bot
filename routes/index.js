@@ -53,6 +53,7 @@ function processMessage(req,res){
 	var wordArr = message.split(" "); 
 	for(var i=0;i<wordArr.length;i++){
 		//check for curses
+		console.log(isCurse(wordArr[i],curseData));
 		if(isCurse(wordArr[i],curseData)){
 			updateCurseObj(user,wordArr[i]);
 	    	reprimandUser(user,wordArr[i]); 
